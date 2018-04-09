@@ -27,6 +27,7 @@ export class TriangleColorPicker extends React.PureComponent {
     this._onVValueChange = this._onVValueChange.bind(this)
     this._onColorSelected = this._onColorSelected.bind(this)
     this._onOldColorSelected = this._onOldColorSelected.bind(this)
+    this._onRelease = this._onRelease.bind(this)
     this._isRTL = I18nManager.isRTL
   }
 
@@ -48,6 +49,12 @@ export class TriangleColorPicker extends React.PureComponent {
     const color = tinycolor(oldColor)
     this.setState({ color: color.toHsv() })
     onOldColorSelected && onOldColorSelected(color.toHexString())
+  }
+
+  _onRelease() {
+    const { onRelease } = this.props
+    const color = tinycolor(this._getColor()).toHexString()
+    onRelease && onRelease(color)
   }
 
   _onSValueChange(s) {
@@ -200,7 +207,8 @@ export class TriangleColorPicker extends React.PureComponent {
         this._changingHColor = s > 1 || s < 0 || v > 1 || v < 0
         handleColorChange({ x, y })
       },
-      onMove: handleColorChange,
+      onMove: handleColorChange, 
+      onEnd: this._onRelease,
     })
   }
 
@@ -282,6 +290,7 @@ TriangleColorPicker.propTypes = {
   oldColor: PropTypes.string,
   onColorChange: PropTypes.func,
   onColorSelected: PropTypes.func,
+  onRelease: PropTypes.func,
   onOldColorSelected: PropTypes.func,
 }
 
